@@ -1,0 +1,20 @@
+view-type (a:String, b:List[String], c:Option[Int])
+
+<html>
+    <body>
+        @a
+        <ul>
+        @b {
+            <li>@_</li>
+        }
+        @b -> item {
+            <li>@item</li>
+        }
+        </ul>
+        @c {
+            é um some
+        }
+
+        @render subview(a, c)
+    </body>
+</html>

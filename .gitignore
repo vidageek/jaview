@@ -1,0 +1,12 @@
+.classpath
+.project
+.settings
+target
+project/target
+project/project/target
+*.swp
+.scala_dependencies
+classes
+.cache
+ong.db
+fechamento.csv
