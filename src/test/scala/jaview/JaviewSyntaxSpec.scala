@@ -15,7 +15,6 @@ class JaviewSyntaxSpec extends Specification {
 
     "parse view-type with single simple parameter" in {
       val jaview = new JaviewSyntax()("view-type (a: String)")
-      println(jaview.scalaCode)
       jaview must_== Root("(a: String)")
     }
 
@@ -32,6 +31,11 @@ class JaviewSyntaxSpec extends Specification {
     "parse multiple html tags with text" in {
       val jaview = new JaviewSyntax()("view-type ()\n<html> a\nasd<a>")
       jaview must_== Root("()", Tag("html"), Text("a\nasd"), Tag("a"))
+    }
+
+    "parse view-type with no parameters and remove leading \n" in {
+      val jaview = new JaviewSyntax()("view-type ()\n<html>")
+      jaview must_== Root("()", Tag("html"))
     }
   }
 

@@ -15,13 +15,14 @@ object ViewNumber {
 }
 
 case class Root(viewType : String, content : Expression*) extends Expression {
+  val className = s"jaview_generated_View${ViewNumber()}"
+
   def scalaCode =
     s"""
-		package jaview.generated 
-		
-		class View${ViewNumber()} extends ($typeDef => String) {
+		class $className extends ($typeDef => String) {
 				
 				def apply$viewType : String = {
+
 						val result = new StringBuilder()
 						
 						${content.map(_.scalaCode).mkString("\n\n")}
@@ -29,13 +30,14 @@ case class Root(viewType : String, content : Expression*) extends Expression {
 						result.toString
 				}
 		} 		
+		scala.reflect.classTag[$className].runtimeClass
 		"""
 
   def typeDef = {
     var res = "("
     var openBrackets = 0
     var beforeColon = true
-    viewType.tail.foreach {
+    viewType.dropRight(1).tail.foreach {
       case ' ' =>
       case '[' =>
         openBrackets += 1
@@ -50,7 +52,7 @@ case class Root(viewType : String, content : Expression*) extends Expression {
       case c if beforeColon =>
       case c => res += c
     }
-    res
+    res + ')'
   }
 }
 case class Tag(name : String) extends Expression {

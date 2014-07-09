@@ -7,24 +7,18 @@ import org.specs2.runner.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class JaviewSpec extends Specification {
 
-  "parse view-type with single parameter with generic type" in {
-    Root("(a: Option[String])").typeDef must_== "(Option[String])"
-  }
+  "jaview" should {
+    "compile simple view" in {
 
-  "parse view-type with single parameter with 2 generic types" in {
-    Root("(a: Map[String, Int])").typeDef must_== "(Map[String,Int])"
-  }
+      val value = new Jaview("view-type ()\n<html>asdf</html>")()
+      value must_== "<html>asdf</html>"
+    }
 
-  "parse view-type with single parameter with nested generic types" in {
-    Root("(a: List[Set[String]])").typeDef must_== "(List[Set[String]])"
-  }
+    "compile simple view with unused parameters" in {
 
-  "parse view-type with single parameter with multiple nested generic types" in {
-    Root("(a: List[Map[String,Int]])").typeDef must_== "(List[Map[String,Int]])"
-  }
-
-  "parse view-type with parameters" in {
-    Root("(a: String, b: scala.Option[Int])").typeDef must_== "(String,scala.Option[Int])"
+      val value = new Jaview("view-type (a : Int)\n<html>asdf</html>")(1)
+      value must_== "<html>asdf</html>"
+    }
   }
 
 }
