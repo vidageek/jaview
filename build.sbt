@@ -5,12 +5,13 @@ name         := "jaview"
 
 version in Global := "1.0"
 
-scalaVersion := "2.11"
+scalaVersion := "2.11.1"
 
 libraryDependencies ++= Seq(
-              "org.parboiled" %% "parboiled-scala" % "1.1.6",
-   						"org.specs2" %% "specs2" % "2.3.11" % "test"
-							)
+						"org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.1",
+						"junit" % "junit" % "4.+" % "test",
+						"org.specs2" %% "specs2" % "2.3.11" % "test"
+						)
 
 EclipseKeys.withSource := true
 
