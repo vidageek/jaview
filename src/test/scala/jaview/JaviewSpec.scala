@@ -24,6 +24,11 @@ class JaviewSpec extends Specification {
       value must_== "<html>asdf 1</html>"
     }
 
+    "compile simple view with single parameter and replace its value" in {
+      val value = new Jaview("view-type (a : Option[Int])\n<html>asdf @a.get</html>")(Some(1))
+      value must_== "<html>asdf 1</html>"
+    }
+
     "compile view with single list parameter and call it's map method" in {
       val value = new Jaview(
         """view-type (a : List[Int])

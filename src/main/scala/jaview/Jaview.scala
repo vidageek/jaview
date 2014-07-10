@@ -31,7 +31,6 @@ class Jaview(view : String) {
 
   def compile[T](view : String) = {
     val root = new JaviewSyntax()(view)
-    println(root.scalaCode)
     new Compile().apply(root.scalaCode).newInstance().asInstanceOf[T]
   }
 
