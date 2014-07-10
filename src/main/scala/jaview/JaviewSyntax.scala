@@ -13,7 +13,7 @@ class JaviewSyntax extends RegexParsers {
 
   def interpolation = "@" ~ "[\\w.]+".r ~ opt("->" ~ "\\w+".r ~ "{" ~ rep(node) ~ "}") ^^ {
     case at ~ variable ~ Some(arrow ~ varName ~ obracket ~ content ~ cbracket) =>
-      ApplyMap(variable, varName, content : _*)
+      Fold(variable, varName, content : _*)
     case at ~ variable ~ None => Variable(variable)
   }
 

@@ -51,7 +51,7 @@ class JaviewSyntaxSpec extends Specification {
     "parse map interpolation" in {
       val jaview = new JaviewSyntax()("view-type ()\n<ul>@abc -> item { <li>@item</li> } </ul>")
       jaview must_== Root("()", Tag("ul"),
-        ApplyMap("abc", "item", Tag("li"), Variable("item"), Tag("/li")), Tag("/ul"))
+        Fold("abc", "item", Tag("li"), Variable("item"), Tag("/li")), Tag("/ul"))
     }
   }
 

@@ -67,12 +67,12 @@ case class Variable(name : String) extends Expression {
   def scalaCode = s"result.append($name.toString());"
 }
 
-case class ApplyMap(variable : String, varName : String, content : Expression*) extends Expression {
+case class Fold(variable : String, varName : String, content : Expression*) extends Expression {
+
   def scalaCode = s"""
-            $variable.map { $varName =>
-            
-            	${content.map(_.scalaCode).mkString("\n\n")}	
-            
+            $variable.foldLeft(result) { 
+							case (result, $varName) =>
+								 	${content.map(_.scalaCode).mkString("\n\n")}	
             }
             """
 }
