@@ -49,6 +49,15 @@ class JaviewSpec extends Specification {
       val value = new Jaview("view-type (a : Option[Int])\n@a -> item { @item }")(None)
       value must_== ""
     }
-  }
 
+    "compile view with arbitrary scala expression and output it's value" in {
+      val value = new Jaview("view-type ()\n@{List(1, 2, 3).foldLeft(\"\") { (a, b) => a + b} }@")()
+      value must_== "123"
+    }
+
+    "compile view with arbitrary scala expression and not output if unit is returned" in {
+      val value = new Jaview("view-type ()\n@{val a = 12;}@")()
+      value must_== ""
+    }
+  }
 }

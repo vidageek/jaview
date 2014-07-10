@@ -6,7 +6,7 @@ sealed trait Expression {
   def scalaCode : String
 }
 
-object ViewNumber {
+object IncNumber {
 
   private val number = new AtomicInteger(0)
 
@@ -14,13 +14,21 @@ object ViewNumber {
 
 }
 
+object TempVar {
+  def apply() = s"var${IncNumber()}"
+}
+
 case class Root(viewType : String, content : Expression*) extends Expression {
-  val className = s"jaview_generated_View${ViewNumber()}"
+  val className = s"jaview_generated_View${IncNumber()}"
 
   def scalaCode =
     s"""
 		class $className extends ($typeDef => String) {
 				
+				private def printIfNotUnit(result: StringBuilder, value: Any) {
+						result.append(if (value == ()) "" else value.toString) 
+				} 
+
 				def apply$viewType : String = {
 
 						val result = new StringBuilder()
@@ -76,4 +84,10 @@ case class Fold(variable : String, varName : String, content : Expression*) exte
   								result
             }
             """
+}
+
+case class Code(block : String) extends Expression {
+
+  def scalaCode = s"printIfNotUnit(result, {$block});"
+
 }

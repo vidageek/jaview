@@ -11,9 +11,11 @@ view-type (a:String, b:List[String], c:Option[Int])
             <li>@item</li>
         }
         </ul>
-        @c {
-            é um some
+        @c -> item { 
+            @item
         }
+        
+        @{List(1, 2, 3).foldLeft("") { (a, b) => a + b} }@
 
         @render subview(a, c)
     </body>
