@@ -22,9 +22,14 @@ class JaviewSyntax extends RegexParsers {
     case before ~ None ~ after => Code(s"$before $after")
   }
 
-  def block : Parser[String] = "{" ~> "[^{}]*".r ~ opt(block) ~ "[^}]*".r <~ "}" ^^ {
-    case before ~ Some(block) ~ after => s"{ $before $block $after }"
-    case before ~ None ~ after => s"{$before $after}"
+  def block : Parser[String] = rep("{" ~> "[^{}]*".r ~ opt(block) ~ "[^}]*".r ~ "}" ~ opt("[^{}]*".r)) ^^ {
+    _.map {
+      case before ~ Some(block) ~ after ~ _ ~ Some(aafter) => s"{ $before $block $after } $aafter"
+      case before ~ Some(block) ~ after ~ _ ~ None => s"{ $before $block $after}"
+      case before ~ None ~ after ~ _ ~ Some(aafter) => s"{ $before $after } $aafter"
+      case before ~ None ~ after ~ _ ~ None => s"{ $before $after }"
+    }.mkString("")
+
   }
 
   def text = "[^<>@{}]+".r ^^ { Text(_) }

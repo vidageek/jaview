@@ -54,9 +54,14 @@ class JaviewSyntaxSpec extends Specification {
         Fold("abc", "item", Tag("li"), Variable("item"), Tag("/li")), Tag("/ul"))
     }
 
-    "parse arbitrary code block" in {
+    "parse arbitrary code block with nested block" in {
       val jaview = new JaviewSyntax()("view-type ()\n@{List(1, 2, 3).foldLeft(\"\") { (a, b) => a + b} }")
-      jaview must_== Root("()", Code("List(1, 2, 3).foldLeft(\"\")  {(a, b) => a + b } "))
+      jaview must_== Root("()", Code("List(1, 2, 3).foldLeft(\"\")  { (a, b) => a + b   }  "))
+    }
+
+    "parse repeated arbitrary code block" in {
+      val jaview = new JaviewSyntax()("view-type ()\n@{ {123} + {123}}")
+      jaview must_== Root("()", Code(" { 123   } + { 123   }  "))
     }
   }
 

@@ -55,6 +55,11 @@ class JaviewSpec extends Specification {
       value must_== "123"
     }
 
+    "compile view with arbitrary scala expression with nested blocks and output it's value" in {
+      val value = new Jaview("view-type ()\n {{123}} + {123}  ")()
+      value must_== "246"
+    }
+
     "compile view with arbitrary scala expression and not output if unit is returned" in {
       val value = new Jaview("view-type ()\n@{val a = 12;}")()
       value must_== ""

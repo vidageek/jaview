@@ -15,7 +15,7 @@ view-type (a:String, b:List[String], c:Option[Int])
             @item
         }
         
-        @{List(1, 2, 3).foldLeft("") { (a, b) => a + b} }
+        @{List(1, 2, 3).foldLeft("") { (a, b) => a + b}, {} }
 
         @render subview(a, c)
     </body>
