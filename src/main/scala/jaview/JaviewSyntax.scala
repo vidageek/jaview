@@ -17,8 +17,14 @@ class JaviewSyntax extends RegexParsers {
     case at ~ variable ~ None => Variable(variable)
   }
 
-  def arbitraryCode = "@{" ~> "(?s)(.*)}@".r ^^ {
-    case code => Code(code.dropRight(2))
+  def arbitraryCode = "@{" ~> "[^{}]*".r ~ opt(block) ~ "[^}]*".r <~ "}" ^^ {
+    case before ~ Some(block) ~ after => Code(s"$before $block $after")
+    case before ~ None ~ after => Code(s"$before $after")
+  }
+
+  def block : Parser[String] = "{" ~> "[^{}]*".r ~ opt(block) ~ "[^}]*".r <~ "}" ^^ {
+    case before ~ Some(block) ~ after => s"{ $before $block $after }"
+    case before ~ None ~ after => s"{$before $after}"
   }
 
   def text = "[^<>@{}]+".r ^^ { Text(_) }
@@ -32,4 +38,12 @@ class JaviewSyntax extends RegexParsers {
     case Failure(a, b) => throw new RuntimeException(s"$a $b")
     case _ => throw new RuntimeException()
   }
+
+  def test = {
+    println(parseAll(block, "{asd{asdasd}mkmk}"))
+  }
+}
+
+object A extends App {
+  new JaviewSyntax().test
 }

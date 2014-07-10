@@ -55,8 +55,8 @@ class JaviewSyntaxSpec extends Specification {
     }
 
     "parse arbitrary code block" in {
-      val jaview = new JaviewSyntax()("view-type ()\n@{List(1, 2, 3).foldLeft(\"\") { (a, b) => a + b} }@")
-      jaview must_== Root("()", Code("List(1, 2, 3).foldLeft(\"\") { (a, b) => a + b} "))
+      val jaview = new JaviewSyntax()("view-type ()\n@{List(1, 2, 3).foldLeft(\"\") { (a, b) => a + b} }")
+      jaview must_== Root("()", Code("List(1, 2, 3).foldLeft(\"\")  {(a, b) => a + b } "))
     }
   }
 
