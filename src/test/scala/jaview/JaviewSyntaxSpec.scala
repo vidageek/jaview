@@ -37,6 +37,11 @@ class JaviewSyntaxSpec extends Specification {
       val jaview = new JaviewSyntax()("view-type ()\n<html>")
       jaview must_== Root("()", Tag("html"))
     }
+
+    "parse variable interpolation" in {
+      val jaview = new JaviewSyntax()("view-type ()\n<html>@abc")
+      jaview must_== Root("()", Tag("html"), Variable("abc"))
+    }
   }
 
 }

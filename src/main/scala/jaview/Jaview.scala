@@ -3,16 +3,6 @@ package jaview
 import java.io.PrintWriter
 import java.io.File
 
-object GenApplies extends App {
-  (1 to 22).foreach { i =>
-    val l = 1 to i
-    val types = l.map("T" + _).mkString(",")
-    val params = l.map(e => s"t$e:T$e").mkString(",")
-    val names = l.map("t" + _).mkString(",")
-    println(s"def apply[$types]($params) : String = compile[($types) => String](view)($names)")
-  }
-}
-
 class Jaview(view : String) {
 
   def apply() : String = compile[() => String](view)()
@@ -54,8 +44,16 @@ class Compile() {
   val tb = cm.mkToolBox()
 
   def apply(code : String) = {
-    val a = tb.eval(tb.parse(code))
-    println(a)
-    a.asInstanceOf[Class[_]]
+    tb.eval(tb.parse(code)).asInstanceOf[Class[_]]
+  }
+}
+
+object GenApplies extends App {
+  (1 to 22).foreach { i =>
+    val l = 1 to i
+    val types = l.map("T" + _).mkString(",")
+    val params = l.map(e => s"t$e:T$e").mkString(",")
+    val names = l.map("t" + _).mkString(",")
+    println(s"def apply[$types]($params) : String = compile[($types) => String](view)($names)")
   }
 }

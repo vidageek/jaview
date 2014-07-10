@@ -15,9 +15,13 @@ class JaviewSpec extends Specification {
     }
 
     "compile simple view with unused parameters" in {
-
       val value = new Jaview("view-type (a : Int)\n<html>asdf</html>")(1)
       value must_== "<html>asdf</html>"
+    }
+
+    "compile simple view with single parameter and replace its value" in {
+      val value = new Jaview("view-type (a : Int)\n<html>asdf @a</html>")(1)
+      value must_== "<html>asdf 1</html>"
     }
   }
 

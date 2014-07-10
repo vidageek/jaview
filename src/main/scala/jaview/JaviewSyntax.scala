@@ -9,11 +9,13 @@ class JaviewSyntax extends RegexParsers {
     case p ~ list => Root(p, list : _*)
   }
 
-  def node = (tag | text)
+  def node = (tag | variable | text)
 
-  def text = "[^<]+".r ^^ { Text(_) }
+  def variable = "@" ~> "\\w+".r ^^ { Variable }
 
-  def tag = "<" ~> "[^>]+".r <~ ">" ^^ { Tag(_) }
+  def text = "[^<@]+".r ^^ { Text(_) }
+
+  def tag = "<" ~> "[^>]+".r <~ ">" ^^ { Tag }
 
   def parameterList = """\([^)]*\)""".r
 
