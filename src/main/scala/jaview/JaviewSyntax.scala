@@ -9,17 +9,21 @@ class JaviewSyntax extends RegexParsers {
     case p ~ list => Root(p, list : _*)
   }
 
-  def node = (tag | variable | text)
+  def node : Parser[Expression] = (tag | interpolation | text)
 
-  def variable = "@" ~> "\\w+".r ^^ { Variable }
+  def interpolation = "@" ~ "\\w+".r ~ opt("->" ~ "\\w+".r ~ "{" ~ rep(node) ~ "}") ^^ {
+    case at ~ variable ~ Some(arrow ~ varName ~ obracket ~ content ~ cbracket) =>
+      ApplyMap(variable, varName, content : _*)
+    case at ~ variable ~ None => Variable(variable)
+  }
 
-  def text = "[^<@]+".r ^^ { Text(_) }
+  def text = "[^<>@{}]+".r ^^ { Text(_) }
 
   def tag = "<" ~> "[^>]+".r <~ ">" ^^ { Tag }
 
   def parameterList = """\([^)]*\)""".r
 
-  def apply(input : String) = parseAll(jaview, input) match {
+  def apply(input : String) : Root = parseAll(jaview, input) match {
     case Success(jaview, _) => jaview
     case Failure(a, b) => throw new RuntimeException(s"$a $b")
     case _ => throw new RuntimeException()

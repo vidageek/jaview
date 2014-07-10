@@ -23,6 +23,17 @@ class JaviewSpec extends Specification {
       val value = new Jaview("view-type (a : Int)\n<html>asdf @a</html>")(1)
       value must_== "<html>asdf 1</html>"
     }
+
+    "compile view with single list parameter and call it's map method" in {
+      val value = new Jaview(
+        """view-type (a : List[Int])
+						<ul>
+							@a -> item {
+								<li>@item</li>
+							}
+						</ul>""")(List(1, 2))
+      value must_== "<ul><li>1</li><li>2</li></ul>"
+    }
   }
 
 }

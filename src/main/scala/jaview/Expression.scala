@@ -37,6 +37,7 @@ case class Root(viewType : String, content : Expression*) extends Expression {
     var res = "("
     var openBrackets = 0
     var beforeColon = true
+
     viewType.dropRight(1).tail.foreach {
       case ' ' =>
       case '[' =>
@@ -64,4 +65,14 @@ case class Text(content : String) extends Expression {
 
 case class Variable(name : String) extends Expression {
   def scalaCode = s"result.append($name.toString());"
+}
+
+case class ApplyMap(variable : String, varName : String, content : Expression*) extends Expression {
+  def scalaCode = s"""
+            $variable.map { $varName =>
+            
+            	${content.map(_.scalaCode).mkString("\n\n")}	
+            
+            }
+            """
 }
