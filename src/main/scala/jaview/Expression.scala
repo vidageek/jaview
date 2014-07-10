@@ -72,7 +72,8 @@ case class Fold(variable : String, varName : String, content : Expression*) exte
   def scalaCode = s"""
             $variable.foldLeft(result) { 
 							case (result, $varName) =>
-								 	${content.map(_.scalaCode).mkString("\n\n")}	
+								 	${content.map(_.scalaCode).mkString("\n\n")}
+  								result
             }
             """
 }
