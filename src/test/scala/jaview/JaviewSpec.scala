@@ -29,7 +29,7 @@ class JaviewSpec extends Specification {
       value must_== "<html>asdf 1</html>"
     }
 
-    "compile view with single list parameter and call it's map method" in {
+    "compile view with single list parameter and call it's foldLeft method" in {
       val value = new Jaview(
         """view-type (a : List[Int])
 						<ul>
@@ -38,6 +38,16 @@ class JaviewSpec extends Specification {
 							}
 						</ul>""")(List(1, 2))
       value must_== "<ul><li>1</li><li>2</li></ul>"
+    }
+
+    "compile view with single list parameter and call it's Some foldLeft method" in {
+      val value = new Jaview("view-type (a : Option[Int])\n@a -> item { @item }")(Option(1))
+      value must_== "1"
+    }
+
+    "compile view with single list parameter and call it's None foldLeft method" in {
+      val value = new Jaview("view-type (a : Option[Int])\n@a -> item { @item }")(None)
+      value must_== ""
     }
   }
 
