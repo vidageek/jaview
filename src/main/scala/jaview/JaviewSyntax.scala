@@ -7,17 +7,17 @@ class JaviewSyntax extends RegexParsers {
 
   override def skipWhitespace = false
 
-  val reservedTokens = "<>@{}"
+  val reservedChars = "<>@{}"
 
-  def jaview : Parser[Root] = "view-type " ~> parameterList ~ "\n" ~ rep(node) ^^ {
+  def root : Parser[Root] = "view-type " ~> parameterList ~ "\n" ~ rep(expression) ^^ {
     case p ~ _ ~ list => Root(p, list : _*)
   }
 
-  def node : Parser[Expression] = (tag | interpolation | text)
+  def expression : Parser[Expression] = tag | interpolation | text
 
   def interpolation = arbitraryCode | variable ||| fold
 
-  def fold = "@" ~> "[\\w.]+".r ~ " -> " ~ "\\w+".r ~ " {" ~ rep(node) <~ "}" ^^ {
+  def fold = "@" ~> "[\\w.]+".r ~ " -> " ~ "\\w+".r ~ " {" ~ rep(expression) <~ "}" ^^ {
     case variable ~ _ ~ varName ~ _ ~ content =>
       Fold(variable, varName, content : _*)
   }
@@ -41,19 +41,19 @@ class JaviewSyntax extends RegexParsers {
 
   }
 
-  def text = s"[^$reservedTokens]+".r ^^ { Text(_) }
+  def text = s"[^$reservedChars]+".r ^^ { Text(_) }
 
   def tag = "<" ~> "[^>]+".r <~ ">" ^^ { Tag }
 
   def parameterList = """\([^)]*\)""".r
 
-  def apply(input : String) : Root = parseAll(jaview, input) match {
+  def apply(input : String) : Root = parseAll(root, input) match {
     case Success(jaview, _) => jaview
     case f => throw new RuntimeException(s"$f")
   }
 
   def test = {
-    println(parseAll(jaview, "view-type ()\n<ul>@abc -> item {<li>@item</li>}</ul>"))
+    println(parseAll(root, "view-type ()\n<ul>@abc -> item {<li>@item</li>}</ul>"))
   }
 }
 
