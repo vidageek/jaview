@@ -11,10 +11,16 @@ class JaviewSyntax extends RegexParsers {
 
   def node : Parser[Expression] = (tag | interpolation | text)
 
-  def interpolation = arbitraryCode | "@" ~ "[\\w.]+".r ~ opt("->" ~ "\\w+".r ~ "{" ~ rep(node) ~ "}") ^^ {
-    case at ~ variable ~ Some(arrow ~ varName ~ obracket ~ content ~ cbracket) =>
+  def interpolation = arbitraryCode | variable ||| fold
+
+  def fold = "@" ~> "[\\w.]+".r ~ "->" ~ "\\w+".r ~ "{" ~ rep(node) <~ "}" ^^ {
+    case variable ~ arrow ~ varName ~ obracket ~ content =>
       Fold(variable, varName, content : _*)
-    case at ~ variable ~ None => Variable(variable)
+
+  }
+
+  def variable = "@" ~> "[\\w.]+".r ^^ {
+    case variable => Variable(variable)
   }
 
   def arbitraryCode = "@{" ~> "[^{}]*".r ~ opt(block) ~ "[^}]*".r <~ "}" ^^ {
