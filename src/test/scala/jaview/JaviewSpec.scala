@@ -51,13 +51,47 @@ class JaviewSpec extends Specification {
     }
 
     "compile view with arbitrary scala expression with nested blocks and output it's value" in {
-      val value = new Jaview("view-type ()\n @{{{123}}+{123}}")()
+      val value = new Jaview("view-type ()\n@{{{123}}+{123}}")()
       value must_== "246"
     }
 
     "compile view with arbitrary scala expression and not output if unit is returned" in {
       val value = new Jaview("view-type ()\n@{val a=12;}")()
       value must_== ""
+    }
+
+    "compile view and preserve spaces" in {
+      val value = new Jaview("""view-type (title:String, l:List[String])
+<html>
+	<head>
+		<title>@title</title>
+	</head>
+	<body>
+		@{ "asdf" }
+		<ul>
+		@l -> item {
+			<li>@item</li>
+		}
+		</ul>
+	</body>
+</html>
+""")("title", List("abc", "cde"))
+      value must_== """<html>
+	<head>
+		<title>title</title>
+	</head>
+	<body>
+		asdf
+		<ul>
+		
+			<li>abc</li>
+		
+			<li>cde</li>
+		
+		</ul>
+	</body>
+</html>
+"""
     }
   }
 }
