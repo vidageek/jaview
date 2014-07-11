@@ -56,7 +56,7 @@ class JaviewSpec extends Specification {
     }
 
     "compile view with arbitrary scala expression with nested blocks and output it's value" in {
-      val value = new Jaview("view-type ()\n {{123}} + {123}  ")()
+      val value = new Jaview("view-type ()\n @{{{123}} + {123}  }")()
       value must_== "246"
     }
 
