@@ -14,9 +14,8 @@ class JaviewSyntax extends RegexParsers {
   def interpolation = arbitraryCode | variable ||| fold
 
   def fold = "@" ~> "[\\w.]+".r ~ "->" ~ "\\w+".r ~ "{" ~ rep(node) <~ "}" ^^ {
-    case variable ~ arrow ~ varName ~ obracket ~ content =>
+    case variable ~ _ ~ varName ~ _ ~ content =>
       Fold(variable, varName, content : _*)
-
   }
 
   def variable = "@" ~> "[\\w.]+".r ^^ {
@@ -24,16 +23,16 @@ class JaviewSyntax extends RegexParsers {
   }
 
   def arbitraryCode = "@{" ~> "[^{}]*".r ~ opt(block) ~ "[^}]*".r <~ "}" ^^ {
-    case before ~ Some(block) ~ after => Code(s"$before $block $after")
-    case before ~ None ~ after => Code(s"$before $after")
+    case before ~ Some(block) ~ after => Code(s"$before$block$after")
+    case before ~ None ~ after => Code(s"$before$after")
   }
 
   def block : Parser[String] = rep("{" ~> "[^{}]*".r ~ opt(block) ~ "[^}]*".r ~ "}" ~ opt("[^{}]*".r)) ^^ {
     _.map {
-      case before ~ Some(block) ~ after ~ _ ~ Some(aafter) => s"{ $before $block $after } $aafter"
-      case before ~ Some(block) ~ after ~ _ ~ None => s"{ $before $block $after}"
-      case before ~ None ~ after ~ _ ~ Some(aafter) => s"{ $before $after } $aafter"
-      case before ~ None ~ after ~ _ ~ None => s"{ $before $after }"
+      case before ~ Some(block) ~ after ~ _ ~ Some(aafter) => s"{$before$block$after}$aafter"
+      case before ~ Some(block) ~ after ~ _ ~ None => s"{$before$block$after}"
+      case before ~ None ~ after ~ _ ~ Some(aafter) => s"{$before$after}$aafter"
+      case before ~ None ~ after ~ _ ~ None => s"{$before$after}"
     }.mkString("")
 
   }
