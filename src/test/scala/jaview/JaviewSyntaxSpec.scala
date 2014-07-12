@@ -82,6 +82,23 @@ class JaviewSyntaxSpec extends Specification {
       val jaview = new JaviewSyntax()("view-type ()\n@raw { @item }")
       jaview must_== Root("()", Raw(" @item "))
     }
+
+    "parse view with escaped reserved chars" in {
+      val jaview = new JaviewSyntax()(s"""view-type ()
+${JaviewSyntax.reservedChars.map("`" + _).mkString(" ")}""")
+
+      val chars = JaviewSyntax.reservedChars.toList.
+        flatMap(c => List(EscapedChar("" + c), Text(" "))).
+        dropRight(1)
+
+      jaview must_== Root("()", chars : _*)
+    }
+
+    "parse view with escaped } inside raw string" in {
+      val value = new JaviewSyntax()(s"view-type ()\n@raw { `} }")
+      value must_== Root("()", Raw(" } "))
+    }
+
   }
 
 }

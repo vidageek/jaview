@@ -106,3 +106,7 @@ case class Code(block : String) extends Expression {
 case class Raw(content : String) extends Expression {
   def scalaCode = s"""result.append("$content");"""
 }
+
+case class EscapedChar(char : String) extends Expression {
+  def scalaCode = s"""result.append("$char"); """
+}

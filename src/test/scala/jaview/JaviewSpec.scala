@@ -70,6 +70,17 @@ class JaviewSpec extends Specification {
       value must_== " @item "
     }
 
+    "compile view with escaped reserved chars" in {
+      val value = new Jaview(s"""view-type ()
+${JaviewSyntax.reservedChars.map("`" + _).mkString(" ")}""")()
+      value must_== s"""${JaviewSyntax.reservedChars.mkString(" ")}"""
+    }
+
+    "compile view with escaped } inside raw string" in {
+      val value = new Jaview(s"view-type ()\n@raw { `} }")()
+      value must_== " } "
+    }
+
     "compile view and preserve spaces" in {
       val value = new Jaview("""view-type (title:String, l:List[String])
 <html>

@@ -3,19 +3,28 @@ package jaview
 import scala.util.parsing.combinator.RegexParsers
 import scala.util._
 
+object JaviewSyntax {
+
+  val reservedChars = "`<>@{}"
+}
+
 class JaviewSyntax extends RegexParsers {
 
-  override def skipWhitespace = false
+  import JaviewSyntax._
 
-  val reservedChars = "<>@{}"
+  override def skipWhitespace = false
 
   def root : Parser[Root] = "view-type " ~> parameterList ~ "\n" ~ rep(expression) ^^ {
     case p ~ _ ~ list => Root(p, list : _*)
   }
 
-  def expression : Parser[Expression] = raw | tag | interpolation | text
+  def expression : Parser[Expression] = escapedChar | raw | tag | interpolation | text
 
-  def raw = "@raw" ~ "\\s*".r ~ "{" ~> "[^}]*".r <~ "}" ^^ Raw
+  def escapedChar = "`" ~> s"[$reservedChars]".r ^^ EscapedChar
+
+  def raw = "@raw" ~ "\\s*".r ~ "{" ~> rep("`}" | "[^}]".r) <~ "}" ^^ {
+    case list => Raw(list.map(c => if (c == "`}") "}" else c).mkString(""))
+  }
 
   def interpolation = arbitraryCode | variable ||| fold
 
