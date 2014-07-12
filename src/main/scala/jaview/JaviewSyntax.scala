@@ -22,9 +22,7 @@ class JaviewSyntax extends RegexParsers {
       Fold(variable, varName, content : _*)
   }
 
-  def variable = "@" ~> "[\\w.]+".r ^^ {
-    case variable => Variable(variable)
-  }
+  def variable = "@" ~> "[\\w.]+".r ^^ Variable
 
   def arbitraryCode = "@{" ~> "[^{}]*".r ~ opt(block) ~ "[^}]*".r <~ "}" ^^ {
     case before ~ Some(block) ~ after => Code(s"$before$block$after")
@@ -41,9 +39,9 @@ class JaviewSyntax extends RegexParsers {
 
   }
 
-  def text = s"[^$reservedChars]+".r ^^ { Text(_) }
+  def text = s"[^$reservedChars]+".r ^^ Text
 
-  def tag = "<" ~> "[^>]+".r <~ ">" ^^ { Tag }
+  def tag = "<" ~> "[\\w/]+".r <~ ">" ^^ Tag
 
   def parameterList = """\([^)]*\)""".r
 
