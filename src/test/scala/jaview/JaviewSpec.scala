@@ -65,6 +65,11 @@ class JaviewSpec extends Specification {
       value must_== ""
     }
 
+    "compile view with raw string" in {
+      val value = new Jaview("view-type ()\n@raw { @item }")()
+      value must_== " @item "
+    }
+
     "compile view and preserve spaces" in {
       val value = new Jaview("""view-type (title:String, l:List[String])
 <html>

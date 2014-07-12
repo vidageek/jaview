@@ -13,7 +13,9 @@ class JaviewSyntax extends RegexParsers {
     case p ~ _ ~ list => Root(p, list : _*)
   }
 
-  def expression : Parser[Expression] = tag | interpolation | text
+  def expression : Parser[Expression] = raw | tag | interpolation | text
+
+  def raw = "@raw" ~ "\\s*".r ~ "{" ~> "[^}]*".r <~ "}" ^^ Raw
 
   def interpolation = arbitraryCode | variable ||| fold
 
@@ -59,7 +61,7 @@ class JaviewSyntax extends RegexParsers {
   }
 
   def test = {
-    println(parseAll(tag, "<html lang=\"pt_BR\" class=\"@asdf\" data-x=\"asdf @value xpto\">"))
+    println(parseAll(raw, "@raw { @item }"))
   }
 }
 

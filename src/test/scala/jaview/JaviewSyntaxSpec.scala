@@ -77,6 +77,11 @@ class JaviewSyntaxSpec extends Specification {
       val jaview = new JaviewSyntax()("view-type ()\n@{{123}+{123}}")
       jaview must_== Root("()", Code("{123}+{123}"))
     }
+
+    "parse raw block" in {
+      val jaview = new JaviewSyntax()("view-type ()\n@raw { @item }")
+      jaview must_== Root("()", Raw(" @item "))
+    }
   }
 
 }

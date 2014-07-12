@@ -102,3 +102,7 @@ case class Code(block : String) extends Expression {
   def scalaCode = s"printIfNotUnit(result, {$block});"
 
 }
+
+case class Raw(content : String) extends Expression {
+  def scalaCode = s"""result.append("$content");"""
+}
