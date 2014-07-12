@@ -41,7 +41,15 @@ class JaviewSyntax extends RegexParsers {
 
   def text = s"[^$reservedChars]+".r ^^ Text
 
-  def tag = "<" ~> "[\\w/]+".r <~ ">" ^^ Tag
+  def tag = "<" ~> "[\\w/]+".r ~ rep(attribute) <~ opt("\\s+") ~ ">" ^^ {
+    case name ~ list => Tag(name, list : _*)
+  }
+
+  def attribute = "\\s+".r ~> "[\\w-]+".r ~ opt("=\"" ~> rep(interpolation | attributeValueText) <~ "\"") ^^ {
+    case attr ~ value => Attribute(attr, value.getOrElse(List[Expression]()) : _*)
+  }
+
+  def attributeValueText = ("[^\"" + reservedChars + "]+").r ^^ Text
 
   def parameterList = """\([^)]*\)""".r
 
@@ -51,10 +59,10 @@ class JaviewSyntax extends RegexParsers {
   }
 
   def test = {
-    println(parseAll(root, "view-type ()\n<ul>@abc -> item {<li>@item</li>}</ul>"))
+    println(parseAll(tag, "<html lang=\"pt_BR\" class=\"@asdf\" data-x=\"asdf @value xpto\">"))
   }
 }
 
-object A extends App {
+object TestParsing extends App {
   new JaviewSyntax().test
 }

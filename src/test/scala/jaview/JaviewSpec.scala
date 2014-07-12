@@ -9,9 +9,14 @@ class JaviewSpec extends Specification {
 
   "jaview" should {
     "compile simple view" in {
-
       val value = new Jaview("view-type ()\n<html>asdf</html>")()
       value must_== "<html>asdf</html>"
+    }
+
+    "compile simple view with tag attributes" in {
+      val value = new Jaview(
+        "view-type (asdf: String)\n<html lang=\"pt_BR\" disabled class=\"@asdf\">asdf</html>")("foo")
+      value must_== "<html lang=\"pt_BR\" disabled class=\"foo\">asdf</html>"
     }
 
     "compile simple view with unused parameters" in {

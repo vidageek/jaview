@@ -28,6 +28,15 @@ class JaviewSyntaxSpec extends Specification {
       jaview must_== Root("()", Tag("html"))
     }
 
+    "parse html tags with attributes" in {
+      val jaview = new JaviewSyntax()("view-type ()\n<html disabled lang=\"pt_BR\" class=\"@asdf\" data-x=\"asdf @value xpto\">")
+      jaview must_== Root("()", Tag("html",
+        Attribute("disabled"),
+        Attribute("lang", Text("pt_BR")),
+        Attribute("class", Variable("asdf")),
+        Attribute("data-x", Text("asdf "), Variable("value"), Text(" xpto"))))
+    }
+
     "parse html tags with text" in {
       val jaview = new JaviewSyntax()("view-type ()\n<html>a\nasd")
       jaview must_== Root("()", Tag("html"), Text("a\nasd"))

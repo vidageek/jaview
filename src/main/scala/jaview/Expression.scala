@@ -2,7 +2,7 @@ package jaview
 
 import java.util.concurrent.atomic.AtomicInteger
 
-sealed trait Expression {
+trait Expression {
   def scalaCode : String
 }
 
@@ -64,8 +64,19 @@ case class Root(viewType : String, content : Expression*) extends Expression {
     res + ')'
   }
 }
-case class Tag(name : String) extends Expression {
-  def scalaCode = s"""result.append("<").append(\"$name\").append(">"); """
+case class Tag(name : String, attributes : Attribute*) extends Expression {
+  def scalaCode =
+    s"""result.append("<").append(\"$name\");
+		${attributes.map(_.scalaCode).mkString("\n\n")}
+		result.append(">"); """
+}
+
+case class Attribute(name : String, content : Expression*) extends Expression {
+  def scalaCode =
+    if (content.size == 0) s"""result.append(" $name");"""
+    else s"""result.append(\" $name=\\"\");
+			${content.map(_.scalaCode).mkString("\n")}
+  	result.append("\\""); """
 }
 case class Text(content : String) extends Expression {
   def scalaCode = "result.append(" + "\"\"\"" + content + "\"\"\"" + ");"
