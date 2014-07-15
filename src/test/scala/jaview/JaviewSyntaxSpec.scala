@@ -33,8 +33,8 @@ class JaviewSyntaxSpec extends Specification {
       jaview must_== Root("()", Tag("html",
         Attribute("disabled"),
         Attribute("lang", Text("pt_BR")),
-        Attribute("class", Variable("asdf")),
-        Attribute("data-x", Text("asdf "), Variable("value"), Text(" xpto"))))
+        Attribute("class", CodeSnippet("asdf")),
+        Attribute("data-x", Text("asdf "), CodeSnippet("value"), Text(" xpto"))))
     }
 
     "parse html tags with text" in {
@@ -54,18 +54,23 @@ class JaviewSyntaxSpec extends Specification {
 
     "parse variable interpolation" in {
       val jaview = new JaviewSyntax()("view-type ()\n<html>@abc")
-      jaview must_== Root("()", Tag("html"), Variable("abc"))
+      jaview must_== Root("()", Tag("html"), CodeSnippet("abc"))
     }
 
     "parse nested variable interpolation" in {
       val jaview = new JaviewSyntax()("view-type ()\n<html>@abc.cde")
-      jaview must_== Root("()", Tag("html"), Variable("abc.cde"))
+      jaview must_== Root("()", Tag("html"), CodeSnippet("abc.cde"))
+    }
+
+    "parse method invocation" in {
+      val jaview = new JaviewSyntax()("view-type ()\n<html>@render(\"bla\")(1)")
+      jaview must_== Root("()", Tag("html"), CodeSnippet("render(\"bla\")(1)"))
     }
 
     "parse fold interpolation" in {
       val jaview = new JaviewSyntax()("view-type ()\n<ul>@abc -> item {<li>@item</li>}</ul>")
       jaview must_== Root("()", Tag("ul"),
-        Fold("abc", "item", Tag("li"), Variable("item"), Tag("/li")), Tag("/ul"))
+        Fold("abc", "item", Tag("li"), CodeSnippet("item"), Tag("/li")), Tag("/ul"))
     }
 
     "parse arbitrary code block with nested block" in {

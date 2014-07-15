@@ -29,9 +29,14 @@ class JaviewSpec extends Specification {
       value must_== "<html>asdf1</html>"
     }
 
-    "compile simple view with single parameter and replace its value" in {
+    "compile simple view with single parameter and replace its value when invoking method" in {
       val value = new Jaview("view-type (a:Option[Int])\n<html>asdf@a.get</html>")(Some(1))
       value must_== "<html>asdf1</html>"
+    }
+
+    "compile simple view with single parameter and replace its value when invoking method with parameters" in {
+      val value = new Jaview("view-type (a:Option[Int])\n<html>asdf@a.getOrElse(\"bla\")</html>")(None)
+      value must_== "<html>asdfbla</html>"
     }
 
     "compile view with single list parameter and call it's foldLeft method" in {

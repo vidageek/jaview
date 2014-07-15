@@ -82,7 +82,7 @@ case class Text(content : String) extends Expression {
   def scalaCode = "result.append(" + "\"\"\"" + content + "\"\"\"" + ");"
 }
 
-case class Variable(name : String) extends Expression {
+case class CodeSnippet(name : String) extends Expression {
   def scalaCode = s"result.append($name.toString());"
 }
 

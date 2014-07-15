@@ -26,14 +26,18 @@ class JaviewSyntax extends RegexParsers {
     case list => Raw(list.map(c => if (c == "`}") "}" else c).mkString(""))
   }
 
-  def interpolation = arbitraryCode | variable ||| fold
+  def interpolation = arbitraryCode | codeSnippet ||| fold
 
   def fold = "@" ~> "[\\w.]+".r ~ " -> " ~ "\\w+".r ~ " {" ~ rep(expression) <~ "}" ^^ {
     case variable ~ _ ~ varName ~ _ ~ content =>
       Fold(variable, varName, content : _*)
   }
 
-  def variable = "@" ~> "[\\w.]+".r ^^ Variable
+  def codeSnippet = "@" ~> "[\\w.]+".r ~ rep(parentesesBlock) ^^ {
+    case name ~ parameterLists => CodeSnippet(s"$name${parameterLists.map("(" + _ + ")").mkString("")}")
+  }
+
+  def parentesesBlock = "(" ~> "[\\w.\"]+".r <~ ")"
 
   def arbitraryCode = "@{" ~> "[^{}]*".r ~ opt(block) ~ "[^}]*".r <~ "}" ^^ {
     case before ~ Some(block) ~ after => Code(s"$before$block$after")
