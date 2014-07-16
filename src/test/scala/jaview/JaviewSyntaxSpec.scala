@@ -85,7 +85,7 @@ class JaviewSyntaxSpec extends Specification {
 
     "parse raw block" in {
       val jaview = new JaviewSyntax()("view-type ()\n@raw { @item }")
-      jaview must_== Root("()", Raw(" @item "))
+      jaview must_== Root("()", Raw(Text(" "), CodeSnippet("item"), Text(" ")))
     }
 
     "parse view with escaped reserved chars" in {
@@ -101,7 +101,7 @@ ${JaviewSyntax.reservedChars.map("`" + _).mkString(" ")}""")
 
     "parse view with escaped } inside raw string" in {
       val value = new JaviewSyntax()(s"view-type ()\n@raw { `} }")
-      value must_== Root("()", Raw(" } "))
+      value must_== Root("()", Raw(Text(" "), EscapedChar("}"), Text(" ")))
     }
 
   }

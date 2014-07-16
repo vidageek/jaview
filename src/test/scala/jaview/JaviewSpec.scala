@@ -71,8 +71,8 @@ class JaviewSpec extends Specification {
     }
 
     "compile view with raw string" in {
-      val value = new Jaview("view-type ()\n@raw { @item }")()
-      value must_== " @item "
+      val value = new Jaview("view-type (item:String)\n@raw { @item }")("asdf")
+      value must_== " asdf "
     }
 
     "compile view with escaped reserved chars" in {

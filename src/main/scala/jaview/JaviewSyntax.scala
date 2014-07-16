@@ -22,8 +22,8 @@ class JaviewSyntax extends RegexParsers {
 
   def escapedChar = "`" ~> s"[$reservedChars]".r ^^ EscapedChar
 
-  def raw = "@raw" ~ "\\s*".r ~ "{" ~> rep("`}" | "[^}]".r) <~ "}" ^^ {
-    case list => Raw(list.map(c => if (c == "`}") "}" else c).mkString(""))
+  def raw = "@raw" ~ "\\s*".r ~ "{" ~> rep(expression) <~ "}" ^^ {
+    case list => Raw(list : _*)
   }
 
   def interpolation = arbitraryCode | codeSnippet ||| fold
