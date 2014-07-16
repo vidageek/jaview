@@ -16,6 +16,11 @@ object JaviewBuild extends Build {
     id = "jaview-core",
     base = file("core"),
     settings = (commonSettings ++ deps(scalaReflect, scalaCompiler, scalaParserCombinator)))
+    
+  lazy val render = Project(
+ 		id = "jaview-render",
+ 		base = file("render"),
+ 		settings = (commonSettings))
 
   lazy val commonSettings: Seq[Setting[_]] = Defaults.defaultSettings ++ Seq(
     organization := "net.vidageek",
