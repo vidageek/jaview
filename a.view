@@ -1,22 +1,22 @@
 view-type (a:String, b:List[String], c:Option[Int])
 
 <html>
-    <body>
-        @a
-        <ul>
-        @b {
-            <li>@_</li>
-        }
-        @b -> item {
-            <li>@item</li>
-        }
-        </ul>
-        @c -> item { 
-            @item
-        }
-        
-        @{List(1, 2, 3).foldLeft("") { (a, b) => a + b}, {} }
+<body>
+    @a
+    <ul>
+    @b {
+        <li>@_</li>
+    }
+    @b -> item {
+        <li>@item</li>
+    }
+    </ul>
+    @c -> item { 
+        @item
+    }
+    
+    @{List(1, 2, 3).foldLeft("") { (a, b) => a + b}, {} }
 
-        @render subview(a, c)
-    </body>
+    @render subview(a, c)
+</body>
 </html>
