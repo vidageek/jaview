@@ -1,0 +1,1 @@
+val render = new jaview.render.Plugin(cache)

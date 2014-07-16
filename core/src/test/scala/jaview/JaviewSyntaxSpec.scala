@@ -63,8 +63,8 @@ class JaviewSyntaxSpec extends Specification {
     }
 
     "parse method invocation" in {
-      val jaview = new JaviewSyntax()("view-type ()\n<html>@render(\"bla\")(1)")
-      jaview must_== Root("()", Tag("html"), CodeSnippet("render(\"bla\")(1)"))
+      val jaview = new JaviewSyntax()("view-type ()\n<html> @render(\"/bla\")(1)</html>")
+      jaview must_== Root("()", Tag("html"), Text(" "), CodeSnippet("render(\"/bla\")(1)"), Tag("/html"))
     }
 
     "parse fold interpolation" in {

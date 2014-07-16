@@ -1,0 +1,2 @@
+view-type (item:String)
+<html> @render("/asdrubal")(item)</html>

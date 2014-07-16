@@ -3,11 +3,11 @@ package jaview
 import java.io.PrintWriter
 import java.io.File
 
-class Jaview(view : String) {
+class Jaview(view : String, cache : CachedJaview) {
 
   private val compiledView = {
     val root = new JaviewSyntax()(view)
-    new Compile().apply(root.scalaCode).newInstance()
+    new Compile().apply(root.scalaCode).getConstructor(classOf[CachedJaview]).newInstance(cache)
   }
 
   def apply() : String = findView[() => String](view)()

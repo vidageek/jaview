@@ -10,7 +10,7 @@ object JaviewBuild extends Build {
   lazy val root = Project(
     id = "jaview",
     base = file("."),
-    aggregate = Seq(core))
+    aggregate = Seq(core, render))
 
   lazy val core = Project(
     id = "jaview-core",
@@ -20,7 +20,8 @@ object JaviewBuild extends Build {
   lazy val render = Project(
  		id = "jaview-render",
  		base = file("render"),
- 		settings = (commonSettings))
+ 		settings = (commonSettings)).
+ 		dependsOn(core)
 
   lazy val commonSettings: Seq[Setting[_]] = Defaults.defaultSettings ++ Seq(
     organization := "net.vidageek",

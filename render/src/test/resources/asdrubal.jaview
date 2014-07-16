@@ -1,0 +1,2 @@
+view-type (item:String)
+<h1>@item</h1>

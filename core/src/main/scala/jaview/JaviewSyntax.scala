@@ -8,7 +8,7 @@ object JaviewSyntax {
   val reservedChars = "`<>@{}"
 }
 
-class JaviewSyntax extends RegexParsers {
+class JaviewSyntax() extends RegexParsers {
 
   import JaviewSyntax._
 
@@ -37,7 +37,7 @@ class JaviewSyntax extends RegexParsers {
     case name ~ parameterLists => CodeSnippet(s"$name${parameterLists.map("(" + _ + ")").mkString("")}")
   }
 
-  def parentesesBlock = "(" ~> "[\\w.\"]+".r <~ ")"
+  def parentesesBlock = "(" ~> "[\\w.\"/]+".r <~ ")"
 
   def arbitraryCode = "@{" ~> "[^{}]*".r ~ opt(block) ~ "[^}]*".r <~ "}" ^^ {
     case before ~ Some(block) ~ after => Code(s"$before$block$after")

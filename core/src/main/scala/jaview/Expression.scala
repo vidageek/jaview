@@ -19,19 +19,28 @@ object TempVar {
 }
 
 case class Root(viewType : String, content : Expression*) extends Expression {
+
   val className = s"jaview_generated_View${IncNumber()}"
 
   def scalaCode =
     s"""
-		class $className extends ($typeDef => String) {
+		class $className(cachedJaview: ${classOf[CachedJaview].getName}) extends ($typeDef => String) {
 				
 				private def printIfNotUnit(result: StringBuilder, value: Any) {
 						result.append(if (value == ()) "" else value.toString) 
 				} 
 
-				def apply$viewType : String = {
 
+				def apply$viewType : String = {
+		
+						${JaviewConfig.imports.mkString("\n")}
+		
+						val cache = cachedJaview
+				
 						val result = new StringBuilder()
+
+						${JaviewConfig.pluginStart.mkString("\n")}
+
 						
 						${content.map(_.scalaCode).mkString("\n\n")}
 

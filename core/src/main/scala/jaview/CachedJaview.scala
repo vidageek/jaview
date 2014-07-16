@@ -14,7 +14,7 @@ class CachedJaview(locations : List[ViewLocation] = DefaultLocations()) {
         map(_.read(s"$viewName.jaview")).
         find(_.isDefined).
         flatten.
-        map(new Jaview(_)).
+        map(new Jaview(_, this)).
         getOrElse(throw new Exception("sera resolvido"))
     })
   }
