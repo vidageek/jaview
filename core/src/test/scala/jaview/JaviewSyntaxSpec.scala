@@ -23,14 +23,24 @@ class JaviewSyntaxSpec extends Specification {
       jaview must_== Root("(a: String)")
     }
 
+    "parse doctype" in {
+      val jaview = new JaviewSyntax()("view-type ()\n<!DOCTYPE html>")
+      jaview must_== Root("()", Tag("!DOCTYPE", false, Attribute("html")))
+    }
+
     "parse html tags" in {
       val jaview = new JaviewSyntax()("view-type ()\n<html>")
-      jaview must_== Root("()", Tag("html"))
+      jaview must_== Root("()", Tag("html", false))
+    }
+
+    "parse self closing tag" in {
+      val jaview = new JaviewSyntax()("view-type ()\n<link />")
+      jaview must_== Root("()", Tag("link", true, Text(" ")))
     }
 
     "parse html tags with attributes" in {
       val jaview = new JaviewSyntax()("view-type ()\n<html disabled lang=\"pt_BR\" class=\"@asdf\" data-x=\"asdf @value xpto\">")
-      jaview must_== Root("()", Tag("html",
+      jaview must_== Root("()", Tag("html", false,
         Attribute("disabled"),
         Attribute("lang", Text("pt_BR")),
         Attribute("class", CodeSnippet("asdf")),
@@ -39,38 +49,53 @@ class JaviewSyntaxSpec extends Specification {
 
     "parse html tags with text" in {
       val jaview = new JaviewSyntax()("view-type ()\n<html>a\nasd")
-      jaview must_== Root("()", Tag("html"), Text("a\nasd"))
+      jaview must_== Root("()", Tag("html", false), Text("a\nasd"))
     }
 
     "parse multiple html tags with text" in {
       val jaview = new JaviewSyntax()("view-type ()\n<html>a\nasd<a>")
-      jaview must_== Root("()", Tag("html"), Text("a\nasd"), Tag("a"))
+      jaview must_== Root("()", Tag("html", false), Text("a\nasd"), Tag("a", false))
     }
 
-    "parse view-type with no parameters and remove leading \n" in {
+    "parse view-type with no parameters and remove leading \\n" in {
       val jaview = new JaviewSyntax()("view-type ()\n<html>")
-      jaview must_== Root("()", Tag("html"))
+      jaview must_== Root("()", Tag("html", false))
     }
 
     "parse variable interpolation" in {
       val jaview = new JaviewSyntax()("view-type ()\n<html>@abc")
-      jaview must_== Root("()", Tag("html"), CodeSnippet("abc"))
+      jaview must_== Root("()", Tag("html", false), CodeSnippet("abc"))
     }
 
     "parse nested variable interpolation" in {
       val jaview = new JaviewSyntax()("view-type ()\n<html>@abc.cde")
-      jaview must_== Root("()", Tag("html"), CodeSnippet("abc.cde"))
+      jaview must_== Root("()", Tag("html", false), CodeSnippet("abc.cde"))
+    }
+
+    "parse variable interpolation at attribute level" in {
+      val jaview = new JaviewSyntax()("view-type ()\n<html @abc.cde>")
+      jaview must_== Root("()", Tag("html", false, Text(" "), CodeSnippet("abc.cde")))
     }
 
     "parse method invocation" in {
       val jaview = new JaviewSyntax()("view-type ()\n<html> @render(\"/bla\")(1)</html>")
-      jaview must_== Root("()", Tag("html"), Text(" "), CodeSnippet("render(\"/bla\")(1)"), Tag("/html"))
+      jaview must_== Root("()", Tag("html", false), Text(" "), CodeSnippet("render(\"/bla\")(1)"), Tag("/html", false))
+    }
+
+    "parse method invocation with empty parameters" in {
+      val jaview = new JaviewSyntax()("view-type ()\n<html> @render(\"/bla\")()</html>")
+      jaview must_== Root("()", Tag("html", false), Text(" "), CodeSnippet("render(\"/bla\")()"), Tag("/html", false))
+    }
+
+    "parse method invocation with multiple parameters" in {
+      val jaview = new JaviewSyntax()("view-type ()\n<html> @render(\"/bla\")(1, 2)</html>")
+      jaview must_== Root("()", Tag("html", false), Text(" "), CodeSnippet("render(\"/bla\")(1, 2)"), Tag("/html", false))
     }
 
     "parse fold interpolation" in {
       val jaview = new JaviewSyntax()("view-type ()\n<ul>@abc -> item {<li>@item</li>}</ul>")
-      jaview must_== Root("()", Tag("ul"),
-        Fold("abc", "item", Tag("li"), CodeSnippet("item"), Tag("/li")), Tag("/ul"))
+      jaview must_== Root("()", Tag("ul", false),
+        Fold("abc", "item", Tag("li", false), CodeSnippet("item"), Tag("/li", false)), Tag("/ul", false))
     }
 
     "parse arbitrary code block with nested block" in {

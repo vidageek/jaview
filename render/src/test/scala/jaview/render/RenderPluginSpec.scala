@@ -15,5 +15,15 @@ class RenderPluginSpec extends Specification {
       val jaview = new CachedJaview()("/asdf")("asdf")
       jaview === "<html> <h1>asdf</h1></html>"
     }
+
+    "include parameterless sub view" in {
+      val jaview = new CachedJaview()("/parameterless")()
+      jaview === "<html> <h1>bla</h1></html>"
+    }
+
+    "include multi parameter sub view" in {
+      val jaview = new CachedJaview()("/multi")()
+      jaview === "<html>  1 2</html>"
+    }
   }
 }

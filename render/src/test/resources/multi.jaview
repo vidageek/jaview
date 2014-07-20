@@ -1,0 +1,2 @@
+view-type ()
+<html> @render("/multisub")(1, 2)</html>

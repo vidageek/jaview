@@ -1,0 +1,2 @@
+view-type ()
+<html> @render("/parameterlesssubview")()</html>

@@ -73,11 +73,11 @@ case class Root(viewType : String, content : Expression*) extends Expression {
     res + ')'
   }
 }
-case class Tag(name : String, attributes : Attribute*) extends Expression {
+case class Tag(name : String, selfClosing : Boolean, attributes : Expression*) extends Expression {
   def scalaCode =
     s"""result.append("<").append(\"$name\");
 		${attributes.map(_.scalaCode).mkString("\n\n")}
-		result.append(">"); """
+		result.append("${if (selfClosing) "/" else ""}>"); """
 }
 
 case class Attribute(name : String, content : Expression*) extends Expression {
@@ -87,6 +87,7 @@ case class Attribute(name : String, content : Expression*) extends Expression {
 			${content.map(_.scalaCode).mkString("\n")}
   	result.append("\\""); """
 }
+
 case class Text(content : String) extends Expression {
   def scalaCode = "result.append(" + "\"\"\"" + content + "\"\"\"" + ");"
 }

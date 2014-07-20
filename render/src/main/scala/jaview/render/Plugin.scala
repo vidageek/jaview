@@ -6,6 +6,7 @@ import jaview.CachedJaview
 class Plugin(cache : CachedJaview) {
 
   def apply(view : String) = new {
+    def apply() = cache(view)()
     def apply[T1](t1 : T1) = cache(view)(t1)
     def apply[T1, T2](t1 : T1, t2 : T2) = cache(view)(t1, t2)
     def apply[T1, T2, T3](t1 : T1, t2 : T2, t3 : T3) = cache(view)(t1, t2, t3)

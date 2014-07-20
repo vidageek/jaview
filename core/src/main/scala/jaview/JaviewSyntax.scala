@@ -20,6 +20,8 @@ class JaviewSyntax() extends RegexParsers {
 
   def expression : Parser[Expression] = escapedChar | raw | tag | interpolation | text
 
+  def expressionWithoutTag : Parser[Expression] = escapedChar | raw | interpolation | text
+
   def escapedChar = "`" ~> s"[$reservedChars]".r ^^ EscapedChar
 
   def raw = "@raw" ~ "\\s*".r ~ "{" ~> rep(expression) <~ "}" ^^ {
@@ -34,10 +36,10 @@ class JaviewSyntax() extends RegexParsers {
   }
 
   def codeSnippet = "@" ~> "[\\w.]+".r ~ rep(parentesesBlock) ^^ {
-    case name ~ parameterLists => CodeSnippet(s"$name${parameterLists.map("(" + _ + ")").mkString("")}")
+    case name ~ parameterLists => CodeSnippet(s"$name${parameterLists.map("(" + _.getOrElse("") + ")").mkString("")}")
   }
 
-  def parentesesBlock = "(" ~> "[\\w.\"/]+".r <~ ")"
+  def parentesesBlock = "(" ~> opt("[\\w.\"/, ]+".r) <~ ")"
 
   def arbitraryCode = "@{" ~> "[^{}]*".r ~ opt(block) ~ "[^}]*".r <~ "}" ^^ {
     case before ~ Some(block) ~ after => Code(s"$before$block$after")
@@ -56,9 +58,27 @@ class JaviewSyntax() extends RegexParsers {
 
   def text = s"[^$reservedChars]+".r ^^ Text
 
-  def tag = "<" ~> "[\\w/]+".r ~ rep(attribute) <~ opt("\\s+") ~ ">" ^^ {
-    case name ~ list => Tag(name, list : _*)
+  def tag = simpleTag | simpleSelfClosingTag | tagWithAttributes | selfClosingTagWithAttributes
+
+  def simpleTag = "<" ~> tagName ~ opt("\\s+".r) <~ ">" ^^ {
+    case name ~ Some(spaces) => Tag(name, false, Text(spaces))
+    case name ~ None => Tag(name, false)
   }
+
+  def simpleSelfClosingTag = "<" ~> tagName ~ opt("\\s+".r) <~ "/>" ^^ {
+    case name ~ Some(spaces) => Tag(name, true, Text(spaces))
+    case name ~ None => Tag(name, true)
+  }
+
+  def tagWithAttributes = "<" ~> tagName ~ rep(attribute | expression) <~ "\\s*".r ~ ">" ^^ {
+    case name ~ list => Tag(name, false, list : _*)
+  }
+
+  def selfClosingTagWithAttributes = "<" ~> tagName ~ rep(attribute | expression) <~ "\\s*".r ~ "/>" ^^ {
+    case name ~ list => Tag(name, true, list : _*)
+  }
+
+  def tagName = "[\\w/!]+".r
 
   def attribute = "\\s+".r ~> "[\\w-]+".r ~ opt("=\"" ~> rep(interpolation | attributeValueText) <~ "\"") ^^ {
     case attr ~ value => Attribute(attr, value.getOrElse(List[Expression]()) : _*)
@@ -74,7 +94,7 @@ class JaviewSyntax() extends RegexParsers {
   }
 
   def test = {
-    println(parseAll(raw, "@raw { @item }"))
+    println(parseAll(tagWithAttributes, "<html @abc.cde>"))
   }
 }
 
