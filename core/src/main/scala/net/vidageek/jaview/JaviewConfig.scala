@@ -4,6 +4,9 @@ import scala.io.Source
 import java.util.Enumeration
 import java.net.URL
 import scala.collection.mutable.ListBuffer
+import net.vidageek.jaview.plugin.ValPluginConfig
+import scala.reflect.runtime.universe._
+import scala.reflect.ClassTag
 
 object JaviewConfig {
 
@@ -11,11 +14,16 @@ object JaviewConfig {
     getClassLoader().
     getResources("jaview.plugin").
     toList.
-    flatMap(Source.fromURL(_).getLines())
+    flatMap(Source.fromURL(_).getLines()).
+    map(Class.forName).
+    map(_.newInstance())
 
-  def imports = plugins.filter(_.startsWith("import "))
+  def valPlugins = only[ValPluginConfig]
 
-  def pluginStart = plugins.filterNot(_.startsWith("import "))
+  def only[T : ClassTag] : List[T] = plugins.filter {
+    case _ : T => true
+    case _ => false
+  }.map(_.asInstanceOf[T])
 
   private implicit class AddToList(val enum : Enumeration[URL]) extends AnyVal {
     def toList : List[URL] = {

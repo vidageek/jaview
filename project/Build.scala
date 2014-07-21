@@ -25,7 +25,7 @@ object JaviewBuild extends Build {
 
   lazy val commonSettings: Seq[Setting[_]] = Defaults.defaultSettings ++ Seq(
     organization := "net.vidageek",
-    version := "1.0",
+    version := "0.1-SNAPSHOT",
     scalaVersion := "2.11.1",
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-g:vars", "-feature", "-language:_"),
     libraryDependencies ++= Seq(junit, specs2))

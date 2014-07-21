@@ -1,1 +1,1 @@
-val render = new net.vidageek.jaview.render.Plugin(cache)
+net.vidageek.jaview.render.Plugin

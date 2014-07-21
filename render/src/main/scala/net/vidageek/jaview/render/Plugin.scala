@@ -2,8 +2,19 @@ package net.vidageek.jaview.render
 
 import net.vidageek.jaview.CachedJaview
 import net.vidageek.jaview.CachedJaview
+import net.vidageek.jaview.plugin.ValPluginConfig
 
-class Plugin(cache : CachedJaview) {
+class Plugin extends ValPluginConfig {
+
+  def valName = "render"
+
+  def constructorCall = "(cache)"
+
+  def pluginClass = classOf[Render]
+
+}
+
+class Render(cache : CachedJaview) {
 
   def apply(view : String) = new {
     def apply() = cache(view)()

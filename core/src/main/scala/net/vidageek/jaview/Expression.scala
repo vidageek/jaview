@@ -33,15 +33,12 @@ case class Root(viewType : String, content : Expression*) extends Expression {
 
 				def apply$viewType : String = {
 		
-						${JaviewConfig.imports.mkString("\n")}
-		
 						val cache = cachedJaview
 				
 						val result = new StringBuilder()
 
-						${JaviewConfig.pluginStart.mkString("\n")}
+						${JaviewConfig.valPlugins.map(_.line).mkString("\n")}
 
-						
 						${content.map(_.scalaCode).mkString("\n\n")}
 
 						result.toString
