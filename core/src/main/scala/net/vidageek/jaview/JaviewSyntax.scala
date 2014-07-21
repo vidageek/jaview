@@ -1,4 +1,4 @@
-package jaview
+package net.vidageek.jaview
 
 import scala.util.parsing.combinator.RegexParsers
 import scala.util._

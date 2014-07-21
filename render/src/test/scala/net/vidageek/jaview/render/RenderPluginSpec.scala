@@ -1,11 +1,11 @@
-package jaview.render
+package net.vidageek.jaview.render
 
 import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
 import org.specs2.mutable.Specification
-import jaview.CachedJaview
-import jaview.Jaview
-import jaview.CachedJaview
+import net.vidageek.jaview.CachedJaview
+import net.vidageek.jaview.Jaview
+import net.vidageek.jaview.CachedJaview
 
 @RunWith(classOf[JUnitRunner])
 class RenderPluginSpec extends Specification {

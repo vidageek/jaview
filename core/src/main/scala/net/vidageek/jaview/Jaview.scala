@@ -1,4 +1,4 @@
-package jaview
+package net.vidageek.jaview
 
 import java.io.PrintWriter
 import java.io.File

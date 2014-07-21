@@ -1,7 +1,7 @@
-package jaview.render
+package net.vidageek.jaview.render
 
-import jaview.CachedJaview
-import jaview.CachedJaview
+import net.vidageek.jaview.CachedJaview
+import net.vidageek.jaview.CachedJaview
 
 class Plugin(cache : CachedJaview) {
 

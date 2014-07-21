@@ -1,4 +1,4 @@
-package jaview
+package net.vidageek.jaview
 
 import scala.io.Source
 import java.util.Enumeration

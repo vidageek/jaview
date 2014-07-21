@@ -1,4 +1,4 @@
-package jaview
+package net.vidageek.jaview
 
 import java.util.concurrent.atomic.AtomicInteger
 

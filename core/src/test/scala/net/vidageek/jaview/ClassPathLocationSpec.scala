@@ -1,4 +1,4 @@
-package jaview
+package net.vidageek.jaview
 
 import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
