@@ -12,7 +12,7 @@ object JaviewBuild extends Build {
   lazy val root = Project(
     id = "jaview",
     base = file("."),
-    aggregate = Seq(core, render))
+    aggregate = Seq(core, render, sbt))
 
   lazy val core = Project(
     id = "jaview-core",
@@ -25,9 +25,22 @@ object JaviewBuild extends Build {
  		settings = (commonSettings)).
  		dependsOn(core)
 
-  lazy val commonSettings: Seq[Setting[_]] = Defaults.defaultSettings ++ sonatypeSettings ++ Seq(
+  lazy val javiewSbt = Project(
+    id = "jaview-sbt",
+    base = file("sbt"),
+    settings = (pluginSettings))
+
+  lazy val commonSettings: Seq[Setting[_]] = Defaults.defaultSettings ++ sonatypeSettings ++ keepSonatypeHappy ++ Seq(
     organization := "net.vidageek",
-    version := "0.1",
+    scalaVersion := "2.11.2")
+
+  lazy val pluginSettings: Seq[Setting[_]] = Defaults.defaultSettings ++ sonatypeSettings ++ keepSonatypeHappy ++ Seq(
+      plugin := true,
+      scalaVersion := "2.10.4"
+    )
+
+  lazy val keepSonatypeHappy: Seq[Setting[_]] = Seq(
+    version = "0.2",
     publishMavenStyle := true,
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/mit-license.php")),
     homepage := Some(url("http://projetos.vidageek.net/jaview")),
@@ -43,10 +56,9 @@ object JaviewBuild extends Build {
       <url>http://www.vidageek.net</url>
     </developer>
   </developers>),
-    scalaVersion := "2.11.1",
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-g:vars", "-feature", "-language:_"),
     libraryDependencies ++= Seq(junit, specs2))
-
+    
   private def deps(d: ModuleID*): Seq[Setting[_]] = Seq(libraryDependencies ++= d.toSeq)
 
   object Dependencies {
