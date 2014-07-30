@@ -12,7 +12,7 @@ object JaviewBuild extends Build {
   lazy val root = Project(
     id = "jaview",
     base = file("."),
-    aggregate = Seq(core, render, sbt))
+    aggregate = Seq(core, render, javiewSbt))
 
   lazy val core = Project(
     id = "jaview-core",
@@ -35,12 +35,11 @@ object JaviewBuild extends Build {
     scalaVersion := "2.11.2")
 
   lazy val pluginSettings: Seq[Setting[_]] = Defaults.defaultSettings ++ sonatypeSettings ++ keepSonatypeHappy ++ Seq(
-      plugin := true,
-      scalaVersion := "2.10.4"
-    )
+      sbtPlugin := true,
+      scalaVersion := "2.10.4")
 
   lazy val keepSonatypeHappy: Seq[Setting[_]] = Seq(
-    version = "0.2",
+    version := "0.2",
     publishMavenStyle := true,
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/mit-license.php")),
     homepage := Some(url("http://projetos.vidageek.net/jaview")),
@@ -62,8 +61,8 @@ object JaviewBuild extends Build {
   private def deps(d: ModuleID*): Seq[Setting[_]] = Seq(libraryDependencies ++= d.toSeq)
 
   object Dependencies {
-    val scalaReflect = "org.scala-lang" % "scala-reflect" % "2.11.1"
-    val scalaCompiler = "org.scala-lang" % "scala-compiler" % "2.11.1"
+    val scalaReflect = "org.scala-lang" % "scala-reflect" % "2.11.2"
+    val scalaCompiler = "org.scala-lang" % "scala-compiler" % "2.11.2"
     val scalaParserCombinator = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.1"
   }
 
