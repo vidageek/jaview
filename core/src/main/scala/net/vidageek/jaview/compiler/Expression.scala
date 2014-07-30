@@ -1,9 +1,11 @@
-package net.vidageek.jaview
+package net.vidageek.jaview.compiler
 
 import java.util.concurrent.atomic.AtomicInteger
+import net.vidageek.jaview.CachedJaview
+import net.vidageek.jaview.JaviewConfig
 
 trait Expression {
-  def scalaCode : String
+  def scalaCode: String
 }
 
 object IncNumber {
@@ -18,9 +20,9 @@ object TempVar {
   def apply() = s"var${IncNumber()}"
 }
 
-case class Root(viewType : String, content : Expression*) extends Expression {
+case class Root(name: Option[String], viewType: String, content: Expression*) extends Expression {
 
-  val className = s"jaview_generated_View${IncNumber()}"
+  val className = name.getOrElse(s"jaview_generated_View${IncNumber()}")
 
   def scalaCode =
     s"""
@@ -70,14 +72,14 @@ case class Root(viewType : String, content : Expression*) extends Expression {
     res + ')'
   }
 }
-case class Tag(name : String, selfClosing : Boolean, attributes : Expression*) extends Expression {
+case class Tag(name: String, selfClosing: Boolean, attributes: Expression*) extends Expression {
   def scalaCode =
     s"""result.append("<").append(\"$name\");
 		${attributes.map(_.scalaCode).mkString("\n\n")}
 		result.append("${if (selfClosing) "/" else ""}>"); """
 }
 
-case class Attribute(name : String, content : Expression*) extends Expression {
+case class Attribute(name: String, content: Expression*) extends Expression {
   def scalaCode =
     if (content.size == 0) s"""result.append(" $name");"""
     else s"""result.append(\" $name=\\"\");
@@ -85,15 +87,15 @@ case class Attribute(name : String, content : Expression*) extends Expression {
   	result.append("\\""); """
 }
 
-case class Text(content : String) extends Expression {
+case class Text(content: String) extends Expression {
   def scalaCode = "result.append(" + "\"\"\"" + content + "\"\"\"" + ");"
 }
 
-case class CodeSnippet(name : String) extends Expression {
+case class CodeSnippet(name: String) extends Expression {
   def scalaCode = s"result.append($name.toString());"
 }
 
-case class Fold(variable : String, varName : String, content : Expression*) extends Expression {
+case class Fold(variable: String, varName: String, content: Expression*) extends Expression {
 
   def scalaCode = s"""
             $variable.foldLeft(result) { 
@@ -104,16 +106,16 @@ case class Fold(variable : String, varName : String, content : Expression*) exte
             """
 }
 
-case class Code(block : String) extends Expression {
+case class Code(block: String) extends Expression {
 
   def scalaCode = s"printIfNotUnit(result, {$block});"
 
 }
 
-case class Raw(content : Expression*) extends Expression {
+case class Raw(content: Expression*) extends Expression {
   def scalaCode = content.map(_.scalaCode).mkString("")
 }
 
-case class EscapedChar(char : String) extends Expression {
+case class EscapedChar(char: String) extends Expression {
   def scalaCode = s"""result.append("$char"); """
 }
