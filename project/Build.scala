@@ -31,7 +31,6 @@ object JaviewBuild extends Build {
     settings = (pluginSettings))
 
   lazy val commonSettings: Seq[Setting[_]] = Defaults.defaultSettings ++ sonatypeSettings ++ keepSonatypeHappy ++ Seq(
-    organization := "net.vidageek",
     scalaVersion := "2.11.2")
 
   lazy val pluginSettings: Seq[Setting[_]] = Defaults.defaultSettings ++ sonatypeSettings ++ keepSonatypeHappy ++ Seq(
@@ -39,6 +38,7 @@ object JaviewBuild extends Build {
       scalaVersion := "2.10.4")
 
   lazy val keepSonatypeHappy: Seq[Setting[_]] = Seq(
+		organization := "net.vidageek",
     version := "0.2",
     publishMavenStyle := true,
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/mit-license.php")),

@@ -46,7 +46,6 @@ case class Root(name: Option[String], viewType: String, content: Expression*) ex
 						result.toString
 				}
 		} 		
-		scala.reflect.classTag[$className].runtimeClass
 		"""
 
   def typeDef = {

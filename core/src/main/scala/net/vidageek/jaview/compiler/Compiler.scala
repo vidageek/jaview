@@ -7,7 +7,7 @@ class Compiler {
 
   def toClass(view: String) = {
     val root = new JaviewSyntax(None)(view)
-    new Compile().apply(root.scalaCode)
+    new Compile().apply(s"${root.scalaCode}\nscala.reflect.classTag[${root.className}].runtimeClass")
   }
 
   def toFile(viewName: String, view: String, dstFolder: File) = {

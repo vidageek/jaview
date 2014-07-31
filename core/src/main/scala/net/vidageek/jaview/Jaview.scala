@@ -4,13 +4,19 @@ import java.io.PrintWriter
 import java.io.File
 import net.vidageek.jaview.compiler.JaviewSyntax
 import net.vidageek.jaview.compiler.Compiler
+import scala.util.Try
 
 class Jaview(viewName: String, view: String, cache: CachedJaview) {
 
   private val compiledView = {
     val compile = new Compiler()
 
-    compile.toClass(view).getConstructor(classOf[CachedJaview]).newInstance(cache)
+    Try {
+      Class.forName(compile.classNameFor(viewName))
+    }.getOrElse {
+      compile.toClass(view)
+    }.getConstructor(classOf[CachedJaview]).
+      newInstance(cache)
 
   }
 
