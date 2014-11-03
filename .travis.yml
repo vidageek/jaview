@@ -3,4 +3,7 @@ language: scala
 scala:
    - 2.11.2
 
-script: sbt test
+script: 
+   - sbt ++$TRAVIS_SCALA_VERSION jaview-core/test
+   - sbt ++$TRAVIS_SCALA_VERSION jaview-render/test
+   - sbt ++2.10.4 jaview-sbt/test
