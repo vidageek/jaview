@@ -1,1 +1,0 @@
-EclipseKeys.withBundledScalaContainers := false
